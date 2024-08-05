@@ -1,0 +1,4 @@
+module cxxCUBLASLt {
+    requires cplusplus
+    header "cublaslt_head.hpp"
+}
