@@ -8,9 +8,8 @@ import cxxCUBLASLt
 final class SwiftCUBLASLtTests: XCTestCase {
     func testExample() throws {
         var handle: cublasLtHandle_t?
-        let result = cublasLtCreate(&handle)
-        print(result)
-        XCTAssert(result == .init(0))
+        let result = cublasLtCreate(&handle).asSwift
+        XCTAssert(result.isSuccessful)
     }
 
     func testMatmul() throws {
@@ -69,7 +68,7 @@ final class SwiftCUBLASLtTests: XCTestCase {
             var pointerAddress = rawBufferPointer.baseAddress
             let outStatus = pointerAddress.cudaMemoryCopy(
                 fromMutableRawPointer: cPointer, numberOfBytes: m * n * f16Size, copyKind: .cudaMemcpyDeviceToHost)
-            print(outStatus)
+            XCTAssert(outStatus.isSuccessful)
         }
         cudaDeviceSynchronize()
 
