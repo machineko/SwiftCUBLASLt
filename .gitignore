@@ -9,3 +9,4 @@ DerivedData/
 .build
 .clangd
 Package.resolved
+.vscode
