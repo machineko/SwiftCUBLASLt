@@ -1,8 +1,9 @@
-import XCTest
-@testable import SwiftCUBLASLt
-import cxxCUBLASLt
 import SwiftCU
 import SwiftCUBLAS
+import XCTest
+import cxxCUBLASLt
+
+@testable import SwiftCUBLASLt
 
 final class SwiftCUBLASLtTests: XCTestCase {
     func testExample() throws {
@@ -58,10 +59,10 @@ final class SwiftCUBLASLtTests: XCTestCase {
         var beta: Float16 = 0.0
 
         let status = cublasLtMatmul(
-            handle, desc.desc, &alpha, aPointer, aDesc.layout, 
+            handle, desc.desc, &alpha, aPointer, aDesc.layout,
             bPointer, bDesc.layout, &beta, cPointer,
-             cDesc.layout, cPointer, cDesc.layout,
-              nil, nil, 0, nil)
+            cDesc.layout, cPointer, cDesc.layout,
+            nil, nil, 0, nil)
         XCTAssert(status.asSwift.isSuccessful)
 
         C.withUnsafeMutableBytes { rawBufferPointer in
@@ -73,7 +74,7 @@ final class SwiftCUBLASLtTests: XCTestCase {
         cudaDeviceSynchronize()
 
         let cExpected = matrixMultiply(m, n, k, A, B, isRowMajor: true)
-        XCTAssert(cExpected.map{Float16($0)} ~= C)
+        XCTAssert(cExpected.map { Float16($0) } ~= C)
     }
 }
 

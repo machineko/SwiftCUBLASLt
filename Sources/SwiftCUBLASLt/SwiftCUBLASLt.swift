@@ -1,8 +1,7 @@
-// import cxxCUBLASLt
-import cxxCUBLASLt
 import SwiftCU
 import SwiftCUBLAS
-
+// import cxxCUBLASLt
+import cxxCUBLASLt
 
 extension cublasStatus_t {
     /// Converts the `cublasStatus_t` to a Swift `cublasStatus`.
@@ -10,7 +9,6 @@ extension cublasStatus_t {
         return cublasStatus(rawValue: Int(self.rawValue))!
     }
 }
-
 
 /// A structure that manages a CUBLASLt handle.
 public struct CUBLASLtHandle: ~Copyable {
@@ -36,8 +34,6 @@ public struct CUBLASLtHandle: ~Copyable {
     }
 }
 
-
-
 public struct CUBLASLtMatrixLayout: ~Copyable {
     var layout: cublasLtMatrixLayout_t?
 
@@ -54,8 +50,10 @@ public struct CUBLASLtMatrixLayout: ~Copyable {
         var layout: cublasLtMatrixLayout_t?
         let status = cublasLtMatrixLayoutCreate(&layout, dataType.asCUDA, rows, columns, ld).asSwift
         var order = cublasLtOrder.cublaslt_order_row.ascublasLt
-        let matrixLayoutStatus = cublasLtMatrixLayoutSetAttribute(layout, CUBLASLT_MATRIX_LAYOUT_ORDER, &order,
-         MemoryLayout<cublasLtOrder_t>.size).asSwift
+        let matrixLayoutStatus = cublasLtMatrixLayoutSetAttribute(
+            layout, CUBLASLT_MATRIX_LAYOUT_ORDER, &order,
+            MemoryLayout<cublasLtOrder_t>.size
+        ).asSwift
 
         // #if safetyCheck
         status.safetyCheckCondition(message: "Can't create cublasLt layout")
@@ -68,8 +66,10 @@ public struct CUBLASLtMatrixLayout: ~Copyable {
         var layout: cublasLtMatrixLayout_t?
         let status = cublasLtMatrixLayoutCreate(&layout, dataType.asCUDA, UInt64(rows), UInt64(columns), Int64(ld)).asSwift
         var order = cublasLtOrder.cublaslt_order_row.ascublasLt
-        let matrixLayoutStatus = cublasLtMatrixLayoutSetAttribute(layout, CUBLASLT_MATRIX_LAYOUT_ORDER, &order,
-         MemoryLayout<cublasLtOrder_t>.size).asSwift
+        let matrixLayoutStatus = cublasLtMatrixLayoutSetAttribute(
+            layout, CUBLASLT_MATRIX_LAYOUT_ORDER, &order,
+            MemoryLayout<cublasLtOrder_t>.size
+        ).asSwift
 
         // #if safetyCheck
         status.safetyCheckCondition(message: "Can't create cublasLt layout")
@@ -78,7 +78,7 @@ public struct CUBLASLtMatrixLayout: ~Copyable {
         self.layout = layout
     }
 
-     deinit {
+    deinit {
         let status = cublasLtMatrixLayoutDestroy(layout).asSwift
         #if safetyCheck
             precondition(status.isSuccessful, "Can't destroy cublasLt layout cublasError: \(status)")
