@@ -34,6 +34,26 @@ public struct CUBLASLtHandle: ~Copyable {
     }
 }
 
+/// A structure that holds parameters for CUBLAS operations with mixed data types.
+public struct CUBLASLtaramsMixed<inputType: CUBLASDataType, outputType: CUBLASDataType, computeType: CUBLASDataType>: ~Copyable {
+    /// Pointer to the first matrix (A).
+    public var A: UnsafePointer<inputType>
+    /// Pointer to the second matrix (B).
+    public var B: UnsafePointer<inputType>
+    /// Pointer to the result matrix (C).
+    public var C: UnsafeMutablePointer<outputType>
+
+    public var aDesc: CUBLASLtMatrixLayout
+    public var bDesc: CUBLASLtMatrixLayout
+    public var cDesc: CUBLASLtMatrixLayout
+
+    /// Scalar multiplier for the product of matrices A and B.
+    public var alpha: computeType
+    /// Scalar multiplier for the matrix C.
+    public var beta: computeType
+}
+
+
 public struct CUBLASLtMatrixLayout: ~Copyable {
     var layout: cublasLtMatrixLayout_t?
 
@@ -71,10 +91,10 @@ public struct CUBLASLtMatrixLayout: ~Copyable {
             MemoryLayout<cublasLtOrder_t>.size
         ).asSwift
 
-        // #if safetyCheck
-        status.safetyCheckCondition(message: "Can't create cublasLt layout")
-        matrixLayoutStatus.safetyCheckCondition(message: "Can't set matrix layout")
-        // #endif
+        #if safetyCheck
+            status.safetyCheckCondition(message: "Can't create cublasLt layout")
+            matrixLayoutStatus.safetyCheckCondition(message: "Can't set matrix layout")
+        #endif
         self.layout = layout
     }
 
