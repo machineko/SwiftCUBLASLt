@@ -7,9 +7,10 @@ let packageDir = URL(fileURLWithPath: #file).deletingLastPathComponent().path
     let cuPath: String = ProcessInfo.processInfo.environment["CUDA_HOME"] ?? "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.5"
     let cuLibPath = "-L\(cuPath)\\lib\\x64"
     let cuIncludePath = "-I\(cuPath)\\include"
+    
 #elseif os(Linux)
     let cuPath = ProcessInfo.processInfo.environment["CUDA_HOME"] ?? "/usr/local/cuda"
-    let cuLibPath = "-L\(cuPath)/lib/x64"
+    let cuLibPath = "-L\(cuPath)/lib64"
     let cuIncludePath = "-I\(cuPath)/include"
 #else
     fatalError("OS not supported \(os)")
@@ -29,7 +30,6 @@ let package = Package(
     [
         .package(url: "https://github.com/machineko/SwiftCU", branch: "main"),
         .package(url: "https://github.com/machineko/SwiftCUBLAS", branch: "main")
-        // .package(url: "https://github.com/apple/swift-testing.git", from: "0.10.0"),
     ],
     targets: [
         .target(
@@ -40,7 +40,7 @@ let package = Package(
             ],
             linkerSettings: [
                 .unsafeFlags([
-                    cuLibPath, cuIncludePath
+                    cuLibPath,
                 ]),
                 .linkedLibrary("cublas"),
                 .linkedLibrary("cublasLt"),
@@ -51,7 +51,9 @@ let package = Package(
             dependencies: [
                 "cxxCUBLASLt",
                 .product(name: "SwiftCU", package: "SwiftCU"),
+                .product(name: "cxxCU", package: "SwiftCU"),
                 .product(name: "SwiftCUBLAS", package: "SwiftCUBLAS")
+
             ],
              swiftSettings: [
                 .interoperabilityMode(.Cxx),
@@ -61,20 +63,17 @@ let package = Package(
             ]
         ),
           .testTarget(
-            name: "SwiftCUBLASTests",
+            name: "SwiftCUBLASLtTests",
            
             dependencies: [
-                "SwiftCU", "cxxCUBLASLt", "SwiftCUBLASLt",
-                // .product(name: "Testing", package: "swift-testing"), 
+                "cxxCUBLASLt", "SwiftCUBLASLt",
+                .product(name: "SwiftCU", package: "SwiftCU"),
+                .product(name: "cxxCU", package: "SwiftCU"),
+                .product(name: "SwiftCUBLAS", package: "SwiftCUBLAS")
             ],
-            
              swiftSettings: [
                 .interoperabilityMode(.Cxx),
-                .unsafeFlags(
-                    [cuIncludePath]
-                )
             ]
-            
         )
     ],
     cxxLanguageStandard: .cxx17

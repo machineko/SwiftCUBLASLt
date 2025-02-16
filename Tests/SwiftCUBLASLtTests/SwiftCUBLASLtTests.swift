@@ -1,14 +1,19 @@
 import SwiftCU
 import SwiftCUBLAS
-import XCTest
-import cxxCUBLASLt
+import Testing
 
+@testable import cxxCUBLASLt
 @testable import SwiftCUBLASLt
 
-final class SwiftCUBLASLtTests: XCTestCase {
-    func testMatmulF16() throws {
-        let handle = CUBLASLtHandle()
+@Suite("Basic GEMM tests")
+struct SwiftCUBLASLtTests {
+    static func setUp() {
         _ = CUDADevice(index: 0).setDevice()
+
+    }
+
+    @Test func testMatmulF16() async throws {
+        let handle = CUBLASLtHandle()
         let m = 2
         let n = 2
         let k = 4
@@ -51,21 +56,20 @@ final class SwiftCUBLASLtTests: XCTestCase {
             C: cPointer!.assumingMemoryBound(to: Float16.self), aDesc: aDesc, bDesc: bDesc, cDesc: cDesc, alpha: Float16(1.0), beta: Float16(0.0)
          )
         let status = handle.gemm(desc: desc, params: &params)
-        XCTAssert(status.isSuccessful)
+        #expect(status.isSuccessful)
         C.withUnsafeMutableBytes { rawBufferPointer in
             var pointerAddress = rawBufferPointer.baseAddress
             let outStatus = pointerAddress.cudaMemoryCopy(
                 fromMutableRawPointer: cPointer, numberOfBytes: m * n * f16Size, copyKind: .cudaMemcpyDeviceToHost)
-            XCTAssert(outStatus.isSuccessful)
+            #expect(outStatus.isSuccessful)
         }
         cudaDeviceSynchronize()
         let cExpected = matrixMultiply(m, n, k, A, B, isRowMajor: true)
-        XCTAssert(cExpected.map { Float16($0) } ~= C)
+        #expect(cExpected.map { Float16($0) } ~= C)
     }
 
-    func testMatmulF32() throws {
+    @Test func testMatmulF32() async throws {
         let handle = CUBLASLtHandle()
-        _ = CUDADevice(index: 0).setDevice()
         let m = 2
         let n = 2
         let k = 4
@@ -110,21 +114,20 @@ final class SwiftCUBLASLtTests: XCTestCase {
             C: cPointer!.assumingMemoryBound(to: Float32.self), aDesc: aDesc, bDesc: bDesc, cDesc: cDesc, alpha: Float32(1.0), beta: Float32(0.0)
          )
         let status = handle.gemm(desc: desc, params: &params)
-        XCTAssert(status.isSuccessful)
+        #expect(status.isSuccessful)
         C.withUnsafeMutableBytes { rawBufferPointer in
             var pointerAddress = rawBufferPointer.baseAddress
             let outStatus = pointerAddress.cudaMemoryCopy(
                 fromMutableRawPointer: cPointer, numberOfBytes: m * n * typeSize, copyKind: .cudaMemcpyDeviceToHost)
-            XCTAssert(outStatus.isSuccessful)
+            #expect(outStatus.isSuccessful)
         }
         cudaDeviceSynchronize()
         let cExpected = matrixMultiply(m, n, k, A, B, isRowMajor: true)
-        XCTAssert(cExpected ~= C)
+        #expect(cExpected ~= C)
     }
 
-    func testMatmulF16F32() throws {
+    @Test func testMatmulF16F32() async throws {
         let handle = CUBLASLtHandle()
-        _ = CUDADevice(index: 0).setDevice()
         let m = 2
         let n = 2
         let k = 4
@@ -168,16 +171,16 @@ final class SwiftCUBLASLtTests: XCTestCase {
             C: cPointer!.assumingMemoryBound(to: Float32.self), aDesc: aDesc, bDesc: bDesc, cDesc: cDesc, alpha: Float32(1.0), beta: Float32(0.0)
          )
         let status = handle.gemm(desc: desc, params: &params)
-        XCTAssert(status.isSuccessful)
+        #expect(status.isSuccessful)
         C.withUnsafeMutableBytes { rawBufferPointer in
             var pointerAddress = rawBufferPointer.baseAddress
             let outStatus = pointerAddress.cudaMemoryCopy(
                 fromMutableRawPointer: cPointer, numberOfBytes: m * n * outTypeSize, copyKind: .cudaMemcpyDeviceToHost)
-            XCTAssert(outStatus.isSuccessful)
+            #expect(outStatus.isSuccessful)
         }
         cudaDeviceSynchronize()
         let cExpected = matrixMultiply(m, n, k, A, B, isRowMajor: true)
-        XCTAssert(cExpected.map{Float32($0)} ~= C)
+        #expect(cExpected.map{Float32($0)} ~= C)
     }
 }
 
