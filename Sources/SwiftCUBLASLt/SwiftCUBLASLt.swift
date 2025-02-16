@@ -52,7 +52,6 @@ public struct CUBLASLtaramsMixed<inputType: CUBLASDataType, outputType: CUBLASDa
     public var beta: computeType
 }
 
-
 public struct CUBLASLtMatrixLayout: ~Copyable {
     var layout: cublasLtMatrixLayout_t?
 

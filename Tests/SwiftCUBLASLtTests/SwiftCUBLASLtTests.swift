@@ -2,8 +2,8 @@ import SwiftCU
 import SwiftCUBLAS
 import Testing
 
-@testable import cxxCUBLASLt
 @testable import SwiftCUBLASLt
+@testable import cxxCUBLASLt
 
 @Suite("Basic GEMM tests")
 struct SwiftCUBLASLtTests {
@@ -53,8 +53,9 @@ struct SwiftCUBLASLtTests {
         let cDesc = CUBLASLtMatrixLayout(fromRowMajor: .CUDA_R_16F, rows: m, columns: n, ld: n)
         var params = CUBLASLtaramsMixed(
             A: aPointer!.assumingMemoryBound(to: Float16.self), B: bPointer!.assumingMemoryBound(to: Float16.self),
-            C: cPointer!.assumingMemoryBound(to: Float16.self), aDesc: aDesc, bDesc: bDesc, cDesc: cDesc, alpha: Float16(1.0), beta: Float16(0.0)
-         )
+            C: cPointer!.assumingMemoryBound(to: Float16.self), aDesc: aDesc, bDesc: bDesc, cDesc: cDesc, alpha: Float16(1.0),
+            beta: Float16(0.0)
+        )
         let status = handle.gemm(desc: desc, params: &params)
         #expect(status.isSuccessful)
         C.withUnsafeMutableBytes { rawBufferPointer in
@@ -111,8 +112,9 @@ struct SwiftCUBLASLtTests {
         let cDesc = CUBLASLtMatrixLayout(fromRowMajor: inputType, rows: m, columns: n, ld: n)
         var params = CUBLASLtaramsMixed(
             A: aPointer!.assumingMemoryBound(to: Float32.self), B: bPointer!.assumingMemoryBound(to: Float32.self),
-            C: cPointer!.assumingMemoryBound(to: Float32.self), aDesc: aDesc, bDesc: bDesc, cDesc: cDesc, alpha: Float32(1.0), beta: Float32(0.0)
-         )
+            C: cPointer!.assumingMemoryBound(to: Float32.self), aDesc: aDesc, bDesc: bDesc, cDesc: cDesc, alpha: Float32(1.0),
+            beta: Float32(0.0)
+        )
         let status = handle.gemm(desc: desc, params: &params)
         #expect(status.isSuccessful)
         C.withUnsafeMutableBytes { rawBufferPointer in
@@ -168,8 +170,9 @@ struct SwiftCUBLASLtTests {
         let cDesc = CUBLASLtMatrixLayout(fromRowMajor: .CUDA_R_32F, rows: m, columns: n, ld: n)
         var params = CUBLASLtaramsMixed(
             A: aPointer!.assumingMemoryBound(to: Float16.self), B: bPointer!.assumingMemoryBound(to: Float16.self),
-            C: cPointer!.assumingMemoryBound(to: Float32.self), aDesc: aDesc, bDesc: bDesc, cDesc: cDesc, alpha: Float32(1.0), beta: Float32(0.0)
-         )
+            C: cPointer!.assumingMemoryBound(to: Float32.self), aDesc: aDesc, bDesc: bDesc, cDesc: cDesc, alpha: Float32(1.0),
+            beta: Float32(0.0)
+        )
         let status = handle.gemm(desc: desc, params: &params)
         #expect(status.isSuccessful)
         C.withUnsafeMutableBytes { rawBufferPointer in
@@ -180,7 +183,7 @@ struct SwiftCUBLASLtTests {
         }
         cudaDeviceSynchronize()
         let cExpected = matrixMultiply(m, n, k, A, B, isRowMajor: true)
-        #expect(cExpected.map{Float32($0)} ~= C)
+        #expect(cExpected.map { Float32($0) } ~= C)
     }
 }
 

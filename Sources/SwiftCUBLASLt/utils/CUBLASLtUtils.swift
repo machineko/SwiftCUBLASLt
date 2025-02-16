@@ -1,9 +1,9 @@
-import cxxCUBLASLt
 import SwiftCU
 import SwiftCUBLAS
+import cxxCUBLASLt
 
-public extension CUBLASLtHandle {
-    func gemm<inputType: CUBLASDataType, outputType: CUBLASDataType, computeType: CUBLASDataType>(
+extension CUBLASLtHandle {
+    public func gemm<inputType: CUBLASDataType, outputType: CUBLASDataType, computeType: CUBLASDataType>(
         desc: borrowing CUBLASLtMatMulDescriptor, params: inout CUBLASLtaramsMixed<inputType, outputType, computeType>
     ) -> cublasStatus {
         let status = cublasLtMatmul(
@@ -18,7 +18,7 @@ public extension CUBLASLtHandle {
         return status
     }
 
-    func gemm<inputType: CUBLASDataType, outputType: CUBLASDataType, computeType: CUBLASDataType>(
+    public func gemm<inputType: CUBLASDataType, outputType: CUBLASDataType, computeType: CUBLASDataType>(
         desc: inout CUBLASLtMatMulDescriptor, params: inout CUBLASLtaramsMixed<inputType, outputType, computeType>, stream: inout cudaStream
     ) -> cublasStatus {
         let status = cublasLtMatmul(
